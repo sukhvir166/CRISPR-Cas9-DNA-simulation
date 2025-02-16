@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRISPR-Cas9 Visualizer</title>
+    <style>
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f0f8ff;
+        margin: 0;
+        padding: 20px;
+      }
+      h1 {
+        text-align: center;
+        animation: fadeIn 2s ease-in;
+      }
+      .container {
+        max-width: 900px;
+        margin: auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        animation: slideUp 1s ease-in-out;
+      }
+      label, input, textarea, button {
+        display: block;
+        margin: 10px 0;
+        width: 100%;
+      }
+      textarea {
+        resize: vertical;
+        height: 100px;
+      }
+      button {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+      .output {
+        margin-top: 20px;
+        background-color: #e6f7ff;
+        padding: 15px;
+        border-radius: 8px;
+        font-family: monospace;
+      }
+      svg {
+        width: 100%;
+        height: 200px;
+        margin-top: 20px;
+      }
+      img {
+        display: block;
+        margin: 20px auto;
+        width: 80%;
+        border-radius: 10px;
+      }
+      @keyframes fadeIn {
+        from {opacity: 0;} to {opacity: 1;}
+      }
+      @keyframes slideUp {
+        from {transform: translateY(30px); opacity: 0;} to {transform: translateY(0); opacity: 1;}
+      }
+    </style>
+  </head>
+  <body>
+    <h1>CRISPR-Cas9 Visualizer</h1>
+    <div class="container">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/d/d2/Sistema_CRISPR-Cas9.png" alt="CRISPR Illustration" />
+      <label for="dna-sequence">Input DNA Sequence:</label>
+      <textarea id="dna-sequence" placeholder="Enter DNA sequence (A, T, C, G)"></textarea>
+      <label for="target-gene">Target Gene Sequence:</label>
+      <input id="target-gene" type="text" placeholder="Enter target gene sequence" />
+      <button onclick="simulateCRISPR()">Simulate CRISPR-Cas9</button>
+      <button onclick="cutDNA()">Cut DNA</button>
+      <button onclick="repairDNA()">Repair DNA</button>
+      <h2>Simulation Output:</h2>
+      <div class="output" id="output"></div>
+      <svg id="visualization"></svg>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/99/The_schematic_diagram_of_CRISPR-Cas9.webp" alt="DNA Editing" />
+    </div>
+    <script>
+      let dna, target, cutIndex, left, right;
+      function simulateCRISPR() {
+        dna = document
+          .getElementById("dna-sequence")
+          .value.trim()
+          .toUpperCase();
+        target = document
+          .getElementById("target-gene")
+          .value.trim()
+          .toUpperCase();
+        cutIndex = dna.indexOf(target);
+        if (!dna || !target) return alert("Please provide both sequences.");
+        if (cutIndex === -1) return alert("Target not found.");
+        renderVisualization(dna, cutIndex, target.length);
+      }
+
+      function cutDNA() {
+        left = dna.slice(0, cutIndex);
+        right = dna.slice(cutIndex + target.length);
+        document.getElementById(
+          "output"
+        ).innerHTML = `DNA Cut at position ${cutIndex}: ${left}[CUT]${right}`;
+      }
+
+      function repairDNA() {
+        const repaired = prompt("Enter repaired sequence:", "[REPAIRED]");
+        document.getElementById(
+          "output"
+        ).innerHTML = `Repaired DNA: ${left}${repaired}${right}`;
+      }
+
+      function renderVisualization(dna, cutIndex, length) {
+        const svg = document.getElementById("visualization");
+        svg.innerHTML = "";
+        let x = 10;
+        for (let i = 0; i < dna.length; i++) {
+          const color =
+            i >= cutIndex && i < cutIndex + length ? "#ff4b4b" : "#4b8bff";
+          svg.innerHTML += `<rect x='${x}' y='50' width='20' height='30' fill='${color}' />`;
+          svg.innerHTML += `<text x='${x + 5}' y='45' font-size='14'>${
+            dna[i]
+          }</text>`;
+          x += 22;
+        }
+      }
+
+      //design an interactive tool to visualize how CRISPR-Cas9 works. Users should be able to input DNA sequences, select a target gene, and simulate the cutting and repair process. Use CSS, Html and JS in a single Html file.
+
+      /*Example 1:
+DNA Sequence:
+ATCGTACGTAGCTAGCTAGCTAGCGTACGATCGATCGTAGCTAGCTAG
+
+Target Gene:
+TAGCTA
+
+Example 2:
+DNA Sequence:
+GATCGATCGGCTAGCTAGCATCGATCGTAGCTAGCGATCGATCGATC
+
+Target Gene:
+GCTAGC
+
+Example 3:
+DNA Sequence:
+CGTACGATCGTAGCTAGCTAGCTAGCGTACGTAGCTAGCTAGCTAGC
+
+Target Gene:
+CGTACG*/
+
+      /*CRISPR-Cas9 is a revolutionary gene-editing technology that allows scientists to modify DNA with high precision, efficiency, and flexibility.
+
+What is CRISPR-Cas9?
+CRISPR stands for Clustered Regularly Interspaced Short Palindromic Repeats. These are segments of DNA found in bacteria that store genetic sequences from viruses they have encountered, acting as a memory system.
+Cas9 is an enzyme (a protein) that acts like molecular scissors, cutting DNA at specific locations.
+How does CRISPR-Cas9 work?
+Targeting the Gene:
+Scientists design a short RNA sequence (called guide RNA or gRNA) that matches the target gene they want to edit.
+Cutting the DNA:
+The guide RNA leads the Cas9 enzyme to the exact location in the DNA.
+Cas9 then makes a cut at the targeted site.
+Repairing the DNA:
+After the cut, the cell’s natural repair mechanisms take over.
+Scientists can harness these repair processes to:
+Disable a gene by introducing errors during repair.
+Correct a gene by providing a new DNA template for the cell to incorporate during repair.
+Why is CRISPR-Cas9 important?
+Medical Breakthroughs: Potential treatments for genetic disorders like sickle cell anemia, cystic fibrosis, and even cancer.
+Agriculture: Developing crops that are more resistant to pests, diseases, and environmental changes.
+Research: Helps scientists understand gene functions by enabling precise gene modifications.
+Fun Fact:
+CRISPR-Cas9 was inspired by a natural defense system used by bacteria to protect themselves from viruses!*/
+
+
+    </script>
+  </body>
+</html>
